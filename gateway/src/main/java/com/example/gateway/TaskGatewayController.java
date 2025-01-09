@@ -17,7 +17,7 @@ public class TaskGatewayController {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskGatewayController.class);
 
-    @GrpcClient("localhost:9091")
+    @GrpcClient("domain")
     private TaskServiceRudGrpc.TaskServiceRudBlockingStub taskServiceStub;
 
     @Cacheable(value = "tasks", key = "#id")

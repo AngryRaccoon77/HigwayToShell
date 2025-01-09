@@ -38,7 +38,7 @@
       image: opensearchproject/logstash-oss-with-opensearch-output-plugin:7.16.2
       container_name: logstash
       volumes:
-        - ./logstash/pipeline:/usr/share/logstash/pipeline
+        - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       ports:
         - "5000:5000"
       depends_on:
@@ -96,7 +96,7 @@
         resources:
           limits:
             cpus: "2.0"
-            memory: 2G
+
       networks:
         - backend
     opensearch-dashboards:
@@ -105,7 +105,8 @@
       ports:
         - "5601:5601"
       environment:
-        - OPENSEARCH_HOSTS=http://opensearch:9200
+        - OPENSEARCH_HOSTS=http://opensearch
+        - OPENSEARCH_PORT=9200
         - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
       depends_on:
         - opensearch

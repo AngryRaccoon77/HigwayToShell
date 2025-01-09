@@ -24,36 +24,48 @@ public class TaskGatewayController {
     @GetMapping("/{id}")
     public com.example.gateway.models.Task getTask(@PathVariable String id) {
         logger.info("Received request to get task with ID: {}", id);
-        GetTaskRequest request = GetTaskRequest.newBuilder().setId(id).build();
-        TaskResponse response = taskServiceStub.getTaskById(request);
-        logger.info("Successfully retrieved task with ID: {}", id);
+        try {
+            GetTaskRequest request = GetTaskRequest.newBuilder().setId(id).build();
+            TaskResponse response = taskServiceStub.getTaskById(request);
+            logger.info("Successfully retrieved task with ID: {}", id);
 
-        com.example.gateway.models.Task task = new com.example.gateway.models.Task();
-        task.setId(response.getTask().getId());
-        task.setName(response.getTask().getName());
-        task.setStatus(response.getTask().getStatus());
-        task.setPriority(response.getTask().getPriority());
-
-        return task;
+            com.example.gateway.models.Task task = new com.example.gateway.models.Task();
+            task.setId(response.getTask().getId());
+            task.setName(response.getTask().getName());
+            task.setStatus(response.getTask().getStatus());
+            task.setPriority(response.getTask().getPriority());
+            return task;
+        } catch (Exception e) {
+            logger.error("Failed to retrieve task with ID: {}. Database or service might be down.", id, e);
+            throw new RuntimeException("Task not found and database is currently unavailable.");
+        }
     }
 
+
+    @Cacheable(value = "tasks", key = "'allTasks'")
     @GetMapping
     @ResponseBody
     public List<Task> getAllTasks() {
         logger.info("Received request to get all tasks");
-        GetAllTasksRequest request = GetAllTasksRequest.newBuilder().build();
-        GetAllTasksResponse response = taskServiceStub.getAllTasks(request);
-        logger.info("Successfully retrieved all tasks");
+        try {
+            GetAllTasksRequest request = GetAllTasksRequest.newBuilder().build();
+            GetAllTasksResponse response = taskServiceStub.getAllTasks(request);
+            logger.info("Successfully retrieved all tasks");
 
-        return response.getTasksList().stream().map(taskProto -> {
-            com.example.gateway.models.Task task = new com.example.gateway.models.Task();
-            task.setId(taskProto.getId());
-            task.setName(taskProto.getName());
-            task.setStatus(taskProto.getStatus());
-            task.setPriority(taskProto.getPriority());
-            return task;
-        }).collect(Collectors.toList());
+            return response.getTasksList().stream().map(taskProto -> {
+                com.example.gateway.models.Task task = new com.example.gateway.models.Task();
+                task.setId(taskProto.getId());
+                task.setName(taskProto.getName());
+                task.setStatus(taskProto.getStatus());
+                task.setPriority(taskProto.getPriority());
+                return task;
+            }).collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Failed to retrieve all tasks. Database or service might be down.", e);
+            throw new RuntimeException("Tasks are not available and the database is currently unavailable.");
+        }
     }
+
 
     @PostMapping
     public String createTask(@RequestBody com.example.gateway.models.Task task) {

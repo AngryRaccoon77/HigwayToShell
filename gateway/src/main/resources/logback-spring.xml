@@ -1,7 +1,7 @@
 <configuration>
 
     <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${LOGBACK_URL:- }:${LOGBACK_PORT:- }</destination>
+        <destination>logstash:5000</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 

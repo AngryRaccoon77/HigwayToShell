@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package com.example;
+
+option java_multiple_files = true;
+option java_package = "com.example.gateway.proto";
+option java_outer_classname = "TaskProto";
+
+service TaskServiceRud {
+  rpc GetTaskById(GetTaskRequest) returns (TaskResponse);
+
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+
+  rpc GetAllTasks(GetAllTasksRequest) returns (GetAllTasksResponse);
+}
+
+message Task {
+  string id = 1;
+  string name = 2;
+  string status = 3;
+  int32 priority = 4;
+}
+
+message GetTaskRequest {
+  string id = 1;
+}
+
+message TaskResponse {
+  Task task = 1;
+}
+
+message CreateTaskRequest {
+  string name = 1;
+  string status = 2;
+  int32 priority = 3;
+}
+
+
+message CreateTaskResponse {
+  bool success = 1;
+}
+
+message UpdateTaskRequest {
+  string id = 1;
+  string name = 2;
+  string status = 3;
+  int32 priority = 4;
+}
+
+message UpdateTaskResponse {
+  bool success = 1;
+}
+
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message DeleteTaskResponse {
+  bool success = 1;
+}
+
+message GetAllTasksRequest {}
+
+message GetAllTasksResponse {
+  repeated Task tasks = 1;
+}

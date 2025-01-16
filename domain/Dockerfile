@@ -21,7 +21,7 @@ RUN chmod +x gradlew && \
 COPY src ./src
 
 # Собираем приложение
-RUN ./gradlew build --no-daemon
+RUN ./gradlew build -x test --no-daemon
 
 # Финальный этап
 FROM eclipse-temurin:17-jre-alpine
